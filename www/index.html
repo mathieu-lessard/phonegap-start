@@ -76,6 +76,7 @@
 
 		*/
 			document.addEventListener("deviceReady", onDeviceReady, false);
+			
 			function onDeviceReady(){
 				getUserData();
 				
@@ -156,7 +157,7 @@
 					getMyHistory();
 					$('#refreshMyHistory').live('click', getMyHistory);
 				});
-			});
+			}
 			
 				
 			function getLastTask(){
