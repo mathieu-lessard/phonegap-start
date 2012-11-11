@@ -1,0 +1,42 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+	</head>    
+	<body>	
+		<div id="client" data-role="page" data-add-back-btn="true">
+			<div data-role="header">
+				<h1>My Tracker</h1>
+				<div data-role="navbar">
+					<ul>
+						<li><a href="client.html" class="ui-btn-active">My Tracker</a></li>
+						<li><a href="myhistory.html">My History</a></li>
+					</ul>
+				</div>
+			</div>
+			<div data-role="content">
+				<a href="#popupTask" data-rel="popup" data-role="button" data-inline="true" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" data-theme="c" aria-haspopup="true" aria-owns="#popupTask" class="ui-btn ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-up-c"><span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">Change Task</span></span></a>
+				<div id="taskText"></div>
+			</div>
+			
+			<!-- Task Form -->
+			<div data-role="popup" id="popupTask" data-theme="a" data-overlay-theme="a" class="ui-corner-all ui-popup ui-body-a ui-overlay-shadow" aria-disabled="false" data-disabled="false" data-shadow="true" data-corners="true" data-transition="none" data-position-to="window" data-dismissable="false">
+				<a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
+				<form id="taskForm">
+					<div style="padding:10px 20px;">
+						<h3>What task are you working on?</h3>
+						<label for="task" class="ui-hidden-accessible ui-input-text">task:</label>
+						<input type="text" name="task" id="task" value="" placeholder="task" data-theme="a" class="ui-input-text ui-body-a ui-corner-all ui-shadow-inset">
+						<button type="submit" data-theme="b" class="ui-btn-hidden" data-disabled="false">Change Task</button>
+					</div>
+				</form>
+			</div>
+			<div data-role="footer">		
+				<div data-role="navbar">
+					<ul>
+						<li><a id="startTracker">Start Tracker</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>			
+	</body>
+</html>
