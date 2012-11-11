@@ -1,44 +1,206 @@
-<!DOCTYPE html>
-<!--
-    Licensed to the Apache Software Foundation (ASF) under one
-    or more contributor license agreements.  See the NOTICE file
-    distributed with this work for additional information
-    regarding copyright ownership.  The ASF licenses this file
-    to you under the Apache License, Version 2.0 (the
-    "License"); you may not use this file except in compliance
-    with the License.  You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on an
-    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-     KIND, either express or implied.  See the License for the
-    specific language governing permissions and limitations
-    under the License.
--->
+<!DOCTYPE HTML>
 <html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <meta name="format-detection" content="telephone=no" />
-        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
-        <link rel="stylesheet" type="text/css" href="css/index.css" />
-        <title>Hello World</title>
-    </head>
-    <body>
-	
-        <div class="app">
-            <h1>PhoneGap</h1>
-            <div id="deviceready">
-                <p class="status pending blink">Connecting to Device</p>
-                <p class="status complete blink hide">Device is Ready</p>
-            </div>
-        </div>
+	<head>
+		<title>Big Brother Team Tracker</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1"/>
+		<link rel="stylesheet" href="css/jmobile.css" />
+	</head>    
+	<body>        
+		<div id="loginPage" data-role="page" >
 		
-        <script type="text/javascript" src="cordova-2.0.0.js"></script>
-        <script type="text/javascript" src="js/index.js"></script>
-        <script type="text/javascript">
-            app.initialize();
-        </script>
-    </body>
+			<div data-role="header" data-position="fixed">
+				<a data-icon="plus" id="logInOut">Log In</a>
+				<h1>Big Brother Team Tracker</h1>
+				<div data-role="navbar">
+					<ul>
+						<li><a href="client.html">My Tracker</a></li>
+						<li><a href="server.html">Team Tracker</a></li>
+					</ul>
+				</div>
+			</div>
+		
+			<div data-role="content">
+			</div>
+			
+			<!-- Login Form -->
+			<div data-role="popup" id="popupLogin" data-theme="a" data-overlay-theme="a" class="ui-corner-all ui-popup ui-body-a ui-overlay-shadow" aria-disabled="false" data-disabled="false" data-shadow="true" data-corners="true" data-transition="none" data-position-to="window" data-dismissable="false">
+				<form id="loginForm">
+					<div style="padding:10px 20px;">
+						<h3>Please sign in</h3>
+						<div id="loginError"></div>
+						<label for="un" class="ui-hidden-accessible ui-input-text">username:</label>
+						<input type="text" name="user" id="un" value="" placeholder="username" data-theme="a" class="ui-input-text ui-body-a ui-corner-all ui-shadow-inset">
+						<label for="pw" class="ui-hidden-accessible ui-input-text">password:</label>
+						<input type="password" name="pass" id="pw" value="" placeholder="password" data-theme="a" class="ui-input-text ui-body-a ui-corner-all ui-shadow-inset">
+						<button type="submit" data-theme="b" class="ui-btn-hidden" data-disabled="false">Sign in</button>
+					</div>
+				</form>
+			</div>
+			
+		</div>
+		<script src="js/jquery.js"></script>
+		<script src="js/jmobile.js"></script>
+		<script src="socket.io/socket.io.js"></script>
+		<script>
+		/*	
+	function() userData{
+		var realname;
+		var latitude;
+		var longitude;
+		var time;
+		var deviceid;
+		var task;
+
+		for (var n in arguments[0]) { 
+			this[n] = arguments[0][n]; 
+		}		
+	}
+	var positionSuccess  function(position){
+		socket.send(Jsonify(userData({
+			realname:localStorage.user,
+			latitude:position.latitude,
+			longiture:position.longitude,
+			altitude:position.altitude,
+			accuracy:position.accuracy,
+			altitudeaccuracy:position.altidudeAccuracy,
+			time:position.timestamp,
+			deviceid:device.name,
+			task:localStorage.task
+		})));
+	};
+	
+	function positionError(error) {
+		console.log('code: ' + error.code + '\n' + 'message: ' + error.message +'\n');
+	};
+	
+	//This line goes in the timer!
+	navigator.geolocation.getCurrentPosition(positionSuccess, positionError);
+
+		*/
+			var tid;			
+            var socket = io.connect("http://localhost:8080");
+ 
+            socket.on('connect', function () {
+                console.log("Connected to server");
+				socket.send('{"client": "'+localStorage.user+'", "msg":"Hey Server!"}');
+ 
+                socket.on('message', function(message) {
+				//do nothing yet
+                });
+                socket.on('disconnect', function() {
+					console.log("Disconnected from server");
+                });
+            });
+			/************************************
+						index.html
+			************************************/
+			$('#loginPage').live('pageshow', function(event) {
+				$("#popupLogin").popup();
+				
+				$("#loginForm").submit(function() {
+					localStorage.user = $("#un").val();
+					getLastTask();
+					$("#popupLogin").popup("close");
+					$("#logInOut").html('<span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">Log Out</span><span class="ui-icon ui-icon-delete ui-icon-shadow">&nbsp;</span></span>');
+					return false;
+				});
+				
+				$("#logInOut").bind('click', function(){
+					if(localStorage.user){
+						localStorage.removeItem("user");
+						$(this).html('<span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">Log In</span><span class="ui-icon ui-icon-plus ui-icon-shadow">&nbsp;</span></span>');
+					}
+					$( "#popupLogin" ).popup( "open" );
+				});
+			
+				if(typeof(Storage)!=="undefined"){
+					if(!localStorage.user)
+						$("#popupLogin").popup("open");
+					else{
+						$("#logInOut").html('<span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">Log Out</span><span class="ui-icon ui-icon-delete ui-icon-shadow">&nbsp;</span></span>');
+						getLastTask();
+					}
+				}else{
+					alert("No Local Storage. Contact Developer.");
+				}
+			});
+			
+			function getLastTask(){
+				//Give default task if none exists
+				if(!localStorage.task){
+					localStorage.task = "No Task";
+				}
+				
+				//Server call for finding the last task. Only change if task has not been modified.
+			}
+			
+			/************************************
+						client.html
+			************************************/
+			
+			$('#client').live('pageshow', function(event) {
+			
+				$('#taskText').html(localStorage.task);
+				
+				$("#taskForm").submit(function() {
+					localStorage.task = $("#task").val();	
+					$("#popupTask").popup("close");
+					$('#taskText').html(localStorage.task);
+					return false;
+				});
+				
+				$('#popupTask').bind('popupafteropen', function(){
+					$('#task').focus();
+				});
+				
+				$('#startTracker').live('click', function(){
+					console.log("Starting Tracker");
+					sendPosition();
+					tid = setInterval(sendPosition, 5000);
+					$(this).attr('id', 'stopTracker')
+						   .addClass('ui-btn-active')
+						   .html('<span class="ui-btn-inner"><span class="ui-btn-text">Stop Tracker</span></span>');
+				});
+				
+				$('#stopTracker').live('click', function(){
+					clearInterval(tid);
+					console.log("Stopping Tracker");
+					$(this).attr('id', 'startTracker')
+						   .removeClass('ui-btn-active')
+						   .html('<span class="ui-btn-inner"><span class="ui-btn-text">Start Tracker</span></span>');
+				});
+			});
+			
+			/************************************
+						myhistory.html
+			************************************/
+			
+			$('#myhistory').live('pageshow', function(event) {
+				getMyHistory();
+				$('#refreshMyHistory').live('click', getMyHistory);
+			});
+			
+			function getMyHistory(){
+				$('#refreshMyHistory').die('click');
+				$.getJSON("http://localhost:8124?callback=?",
+					{
+						client: localStorage.user
+					},
+					function(data) {
+						$("#myHistoryContent").html(data);
+						$('#refreshMyHistory').removeClass('ui-btn-active');	
+						$('#refreshMyHistory').live('click', getMyHistory);					
+					}
+				);
+			}
+			
+			/************************************
+						client code
+			************************************/
+			function sendPosition(){
+				console.log("Send Position");
+				socket.send('{"client": "'+localStorage.user+'", "msg":{"task":"","location":""}}');
+			}
+		</script>
+	</body>
 </html>
