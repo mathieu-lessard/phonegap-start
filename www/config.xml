@@ -13,12 +13,19 @@
         Mathieu lessard
     </author>
 
-    <feature name="http://api.phonegap.com/1.0/device" />
-
-    <preference name="phonegap-version" value="2.0.0" />
+    <preference name="phonegap-version" value="2.2.0" />
     <preference name="orientation"      value="default" />
     <preference name="target-device"    value="universal" />
-    <preference name="fullscreen"       value="false" />
+    <preference name="fullscreen"       value="true" />
+	<preference name="stay-in-webview" value="true" />
+	
+    <feature name="http://api.phonegap.com/1.0/device" />
+	<feature name="http://api.phonegap.com/1.0/geolocation"/>
+	<feature name="http://api.phonegap.com/1.0/network"/>
+	<feature name="http://api.phonegap.com/1.0/notification"/>
+	
+	<access origin="http://192.168.1.8" subdomains="true"/>
+	<access origin="http://64.180.220.216" subdomains="true"/>
 
     <icon src="icon.png" />
     <icon src="res/icon/android/icon-36-ldpi.png"   gap:platform="android"    gap:density="ldpi" />

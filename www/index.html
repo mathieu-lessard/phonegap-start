@@ -171,7 +171,7 @@
 			
 			function getMyHistory(){
 				$('#refreshMyHistory').die('click');
-				$.getJSON("http://localhost:8124?callback=?",
+				$.getJSON("http://192.168.1.8:8124?callback=?",
 					{
 						client: localStorage.uuid
 					},
@@ -202,6 +202,7 @@
 		</script>
 		<script src="js/jquery.js"></script>
 		<script src="http://192.168.1.8:8080/socket.io/socket.io.js"></script>
+		<script type="text/javascript" charset="utf-8" src="cordova.js"></script>
 		<script src="js/jmobile.js"></script>
 	</body>
 </html>
