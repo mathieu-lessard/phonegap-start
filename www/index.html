@@ -42,9 +42,6 @@
 			</div>
 			
 		</div>
-		<script src="js/jquery.js"></script>
-		<script src="js/jmobile.js"></script>
-		<script src="http://192.168.1.8:8080/socket.io/socket.io.js"></script>
 		<script>
 		/*	
 	function() userData{
@@ -81,55 +78,105 @@
 	navigator.geolocation.getCurrentPosition(positionSuccess, positionError);
 
 		*/
-			var tid;
-			//http://64.180.220.216:8080/
-            var socket = io.connect("http://192.168.1.8:8080");
- 
-            socket.on('connect', function () {
-                console.log("Connected to server");
-				socket.send('{"client": "'+localStorage.user+'", "msg":"Hey Server!"}');
- 
-                socket.on('message', function(message) {
-				//do nothing yet
-                });
-                socket.on('disconnect', function() {
-					console.log("Disconnected from server");
-                });
-            });
-			/************************************
-						index.html
-			************************************/
-			$('#loginPage').live('pageshow', function(event) {
-				$("#popupLogin").popup();
-				
-				$("#loginForm").submit(function() {
-					localStorage.user = $("#un").val();
-					getLastTask();
-					$("#popupLogin").popup("close");
-					$("#logInOut").html('<span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">Log Out</span><span class="ui-icon ui-icon-delete ui-icon-shadow">&nbsp;</span></span>');
-					return false;
+	
+			$(document).bind("mobileinit", function(){
+				var tid;
+				//http://64.180.220.216:8080/
+				var socket = io.connect("http://192.168.1.8:8080");
+	
+				socket.on('connect', function () {
+					console.log("Connected to server");
+					socket.send('{"client": "'+localStorage.user+'", "msg":"Hey Server!"}');
+	
+					socket.on('message', function(message) {
+					//do nothing yet
+					});
+					socket.on('disconnect', function() {
+						console.log("Disconnected from server");
+					});
 				});
-				
-				$("#logInOut").bind('click', function(){
-					if(localStorage.user){
-						localStorage.removeItem("user");
-						$(this).html('<span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">Log In</span><span class="ui-icon ui-icon-plus ui-icon-shadow">&nbsp;</span></span>');
-					}
-					$( "#popupLogin" ).popup( "open" );
-				});
-			
-				if(typeof(Storage)!=="undefined"){
-					if(!localStorage.user)
-						$("#popupLogin").popup("open");
-					else{
-						$("#logInOut").html('<span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">Log Out</span><span class="ui-icon ui-icon-delete ui-icon-shadow">&nbsp;</span></span>');
+				/************************************
+							index.html
+				************************************/
+				$('#loginPage').live('pagebeforeshow', function(event) {
+					$("#popupLogin").popup();
+					
+					$("#loginForm").submit(function() {
+						localStorage.user = $("#un").val();
 						getLastTask();
+						$("#popupLogin").popup("close");
+						$("#logInOut").html('<span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">Log Out</span><span class="ui-icon ui-icon-delete ui-icon-shadow">&nbsp;</span></span>');
+						return false;
+					});
+					
+					$("#logInOut").bind('click', function(){
+						if(localStorage.user){
+							localStorage.removeItem("user");
+							$(this).html('<span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">Log In</span><span class="ui-icon ui-icon-plus ui-icon-shadow">&nbsp;</span></span>');
+						}
+						$( "#popupLogin" ).popup( "open" );
+					});
+				
+					if(typeof(Storage)!=="undefined"){
+						if(!localStorage.user)
+							$("#popupLogin").popup("open");
+						else{
+							$("#logInOut").html('<span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">Log Out</span><span class="ui-icon ui-icon-delete ui-icon-shadow">&nbsp;</span></span>');
+							getLastTask();
+						}
+					}else{
+						alert("No Local Storage. Contact Developer.");
 					}
-				}else{
-					alert("No Local Storage. Contact Developer.");
-				}
+				});
+				
+				/************************************
+							client.html
+				************************************/
+				
+				$('#client').live('pagebeforeshow', function(event) {
+				
+					$('#taskText').html(localStorage.task);
+					
+					$("#taskForm").submit(function() {
+						localStorage.task = $("#task").val();	
+						$("#popupTask").popup("close");
+						$('#taskText').html(localStorage.task);
+						return false;
+					});
+					
+					$('#popupTask').bind('popupafteropen', function(){
+						$('#task').focus();
+					});
+					
+					$('#startTracker').live('click', function(){
+						console.log("Starting Tracker");
+						sendPosition();
+						tid = setInterval(sendPosition, 5000);
+						$(this).attr('id', 'stopTracker')
+							.addClass('ui-btn-active')
+							.html('<span class="ui-btn-inner"><span class="ui-btn-text">Stop Tracker</span></span>');
+					});
+					
+					$('#stopTracker').live('click', function(){
+						clearInterval(tid);
+						console.log("Stopping Tracker");
+						$(this).attr('id', 'startTracker')
+							.removeClass('ui-btn-active')
+							.html('<span class="ui-btn-inner"><span class="ui-btn-text">Start Tracker</span></span>');
+					});
+				});
+				
+				/************************************
+							myhistory.html
+				************************************/
+				
+				$('#myhistory').live('pagebeforeshow', function(event) {
+					getMyHistory();
+					$('#refreshMyHistory').live('click', getMyHistory);
+				});
 			});
 			
+				
 			function getLastTask(){
 				//Give default task if none exists
 				if(!localStorage.task){
@@ -138,52 +185,6 @@
 				
 				//Server call for finding the last task. Only change if task has not been modified.
 			}
-			
-			/************************************
-						client.html
-			************************************/
-			
-			$('#client').live('pageshow', function(event) {
-			
-				$('#taskText').html(localStorage.task);
-				
-				$("#taskForm").submit(function() {
-					localStorage.task = $("#task").val();	
-					$("#popupTask").popup("close");
-					$('#taskText').html(localStorage.task);
-					return false;
-				});
-				
-				$('#popupTask').bind('popupafteropen', function(){
-					$('#task').focus();
-				});
-				
-				$('#startTracker').live('click', function(){
-					console.log("Starting Tracker");
-					sendPosition();
-					tid = setInterval(sendPosition, 5000);
-					$(this).attr('id', 'stopTracker')
-						   .addClass('ui-btn-active')
-						   .html('<span class="ui-btn-inner"><span class="ui-btn-text">Stop Tracker</span></span>');
-				});
-				
-				$('#stopTracker').live('click', function(){
-					clearInterval(tid);
-					console.log("Stopping Tracker");
-					$(this).attr('id', 'startTracker')
-						   .removeClass('ui-btn-active')
-						   .html('<span class="ui-btn-inner"><span class="ui-btn-text">Start Tracker</span></span>');
-				});
-			});
-			
-			/************************************
-						myhistory.html
-			************************************/
-			
-			$('#myhistory').live('pageshow', function(event) {
-				getMyHistory();
-				$('#refreshMyHistory').live('click', getMyHistory);
-			});
 			
 			function getMyHistory(){
 				$('#refreshMyHistory').die('click');
@@ -207,5 +208,8 @@
 				socket.send('{"client": "'+localStorage.user+'", "msg":{"task":"","location":""}}');
 			}
 		</script>
+		<script src="js/jquery.js"></script>
+		<script src="http://192.168.1.8:8080/socket.io/socket.io.js"></script>
+		<script src="js/jmobile.js"></script>
 	</body>
 </html>
