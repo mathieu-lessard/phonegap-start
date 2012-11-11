@@ -75,8 +75,8 @@
 	navigator.geolocation.getCurrentPosition(positionSuccess, positionError);
 
 		*/
-	
-			$(document).bind("mobileinit", function(){
+			document.addEventListener("deviceReady", onDeviceReady, false);
+			function onDeviceReady(){
 				getUserData();
 				
 				var tid;
