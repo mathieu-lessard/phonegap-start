@@ -75,10 +75,9 @@
 	navigator.geolocation.getCurrentPosition(positionSuccess, positionError);
 
 		*/
-			document.addEventListener("deviceReady", onDeviceReady, false);
+			document.addEventListener("deviceReady", getUserData, false);
 			
-			function onDeviceReady(){
-				getUserData();
+			$(document).bind("mobileinit", function(){
 				
 				var tid;
 				//http://64.180.220.216:8080/
@@ -157,7 +156,7 @@
 					getMyHistory();
 					$('#refreshMyHistory').live('click', getMyHistory);
 				});
-			}
+			});
 			
 				
 			function getLastTask(){
