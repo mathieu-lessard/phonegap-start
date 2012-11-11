@@ -13,7 +13,6 @@
 		<div id="loginPage" data-role="page" >
 		
 			<div data-role="header" data-position="fixed">
-				<a data-icon="plus" id="logInOut">Log In</a>
 				<h1>Big Brother Team Tracker</h1>
 				<div data-role="navbar">
 					<ul>
@@ -24,23 +23,21 @@
 			</div>
 		
 			<div data-role="content">
+				<a href="#popupName" data-rel="popup" data-role="button" data-inline="true" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" data-theme="c" aria-haspopup="true" aria-owns="#popupTask" class="ui-btn ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-up-c"><span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">Change Name</span></span></a>
 			</div>
 			
-			<!-- Login Form -->
-			<div data-role="popup" id="popupLogin" data-theme="a" data-ajax="false" data-overlay-theme="a" class="ui-corner-all ui-popup ui-body-a ui-overlay-shadow" aria-disabled="false" data-disabled="false" data-shadow="true" data-corners="true" data-transition="none" data-position-to="window" data-dismissable="false">
-				<form id="loginForm" action="#login">
+			<div data-role="popup" id="popupName" data-theme="a" data-overlay-theme="a" class="ui-corner-all ui-popup ui-body-a ui-overlay-shadow" aria-disabled="false" data-disabled="false" data-shadow="true" data-corners="true" data-transition="none" data-position-to="window" data-dismissable="false">
+				<a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
+				<form id="taskForm">
 					<div style="padding:10px 20px;">
-						<h3>Please sign in</h3>
-						<div id="loginError"></div>
-						<label for="un" class="ui-hidden-accessible ui-input-text">username:</label>
-						<input type="text" name="user" id="un" value="" placeholder="username" data-theme="a" class="ui-input-text ui-body-a ui-corner-all ui-shadow-inset">
-						<label for="pw" class="ui-hidden-accessible ui-input-text">password:</label>
-						<input type="password" name="pass" id="pw" value="" placeholder="password" data-theme="a" class="ui-input-text ui-body-a ui-corner-all ui-shadow-inset">
-						<button type="submit" data-theme="b" class="ui-btn-hidden" data-disabled="false">Sign in</button>
+						<h3>Who Are You!?</h3>
+						<div id="uuid">UUID: </div>
+						<label for="name" class="ui-hidden-accessible ui-input-text">name:</label>
+						<input type="text" name="name" id="name" value="" placeholder="name" data-theme="a" class="ui-input-text ui-body-a ui-corner-all ui-shadow-inset">
+						<button type="submit" data-theme="b" class="ui-btn-hidden" data-disabled="false">Submit</button>
 					</div>
 				</form>
 			</div>
-			
 		</div>
 		<script>
 		/*	
@@ -80,14 +77,15 @@
 		*/
 	
 			$(document).bind("mobileinit", function(){
+				getUserData();
+				
 				var tid;
 				//http://64.180.220.216:8080/
 				var socket = io.connect("http://192.168.1.8:8080");
 	
 				socket.on('connect', function () {
 					console.log("Connected to server");
-					socket.send('{"client": "'+localStorage.user+'", "msg":"Hey Server!"}');
-	
+					socket.send('{"client": "'+localStorage.uuid+'", "msg":"Hey Server!"}');	
 					socket.on('message', function(message) {
 					//do nothing yet
 					});
@@ -99,31 +97,15 @@
 							index.html
 				************************************/
 				$('#loginPage').live('pagebeforeshow', function(event) {
-					$("#popupLogin").popup();
+					$('#uuid').html('UUID: '+localStorage.uuid);
 					
 					$("#loginForm").submit(function() {
-						localStorage.user = $("#un").val();
-						getLastTask();
-						$("#popupLogin").popup("close");
-						$("#logInOut").html('<span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">Log Out</span><span class="ui-icon ui-icon-delete ui-icon-shadow">&nbsp;</span></span>');
+						localStorage.name = $("#name").val();
 						return false;
-					});
-					
-					$("#logInOut").bind('click', function(){
-						if(localStorage.user){
-							localStorage.removeItem("user");
-							$(this).html('<span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">Log In</span><span class="ui-icon ui-icon-plus ui-icon-shadow">&nbsp;</span></span>');
-						}
-						$( "#popupLogin" ).popup( "open" );
 					});
 				
 					if(typeof(Storage)!=="undefined"){
-						if(!localStorage.user)
-							$("#popupLogin").popup("open");
-						else{
-							$("#logInOut").html('<span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">Log Out</span><span class="ui-icon ui-icon-delete ui-icon-shadow">&nbsp;</span></span>');
-							getLastTask();
-						}
+						//Fill in form
 					}else{
 						alert("No Local Storage. Contact Developer.");
 					}
@@ -190,7 +172,7 @@
 				$('#refreshMyHistory').die('click');
 				$.getJSON("http://localhost:8124?callback=?",
 					{
-						client: localStorage.user
+						client: localStorage.uuid
 					},
 					function(data) {
 						$("#myHistoryContent").html(data);
@@ -200,12 +182,18 @@
 				);
 			}
 			
+			function getName(){			
+				localStorage.uuid = device.uuid;
+				localStorage.name = 'Mathieu';
+				localStorage.task = 'Chillin and being cool';
+			}
+			
 			/************************************
 						client code
 			************************************/
 			function sendPosition(){
 				console.log("Send Position");
-				socket.send('{"client": "'+localStorage.user+'", "msg":{"task":"","location":""}}');
+				socket.send('{"client": "'+localStorage.uuid+'", "msg":{"task":"","location":""}}');
 			}
 		</script>
 		<script src="js/jquery.js"></script>
