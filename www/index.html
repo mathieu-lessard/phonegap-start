@@ -4,6 +4,10 @@
 		<title>Big Brother Team Tracker</title>
 		<meta name="viewport" content="width=device-width,initial-scale=1"/>
 		<link rel="stylesheet" href="css/jmobile.css" />
+		<meta name="format-detection" content="telephone=no">
+		<!-- Temporarily have these values? -->
+		<meta http-equiv="CACHE-CONTROL" content="NO-CACHE" />
+		<meta http-equiv="EXPIRES" content="Mon, 01 Jan 2000 00:00:01 GMT" />
 	</head>    
 	<body>        
 		<div id="loginPage" data-role="page" >
@@ -23,8 +27,8 @@
 			</div>
 			
 			<!-- Login Form -->
-			<div data-role="popup" id="popupLogin" data-theme="a" data-overlay-theme="a" class="ui-corner-all ui-popup ui-body-a ui-overlay-shadow" aria-disabled="false" data-disabled="false" data-shadow="true" data-corners="true" data-transition="none" data-position-to="window" data-dismissable="false">
-				<form id="loginForm">
+			<div data-role="popup" id="popupLogin" data-theme="a" data-ajax="false" data-overlay-theme="a" class="ui-corner-all ui-popup ui-body-a ui-overlay-shadow" aria-disabled="false" data-disabled="false" data-shadow="true" data-corners="true" data-transition="none" data-position-to="window" data-dismissable="false">
+				<form id="loginForm" action="#login">
 					<div style="padding:10px 20px;">
 						<h3>Please sign in</h3>
 						<div id="loginError"></div>
@@ -40,7 +44,7 @@
 		</div>
 		<script src="js/jquery.js"></script>
 		<script src="js/jmobile.js"></script>
-		<script src="socket.io/socket.io.js"></script>
+		<script src="js/socket.io/socket.io.js"></script>
 		<script>
 		/*	
 	function() userData{
@@ -77,8 +81,9 @@
 	navigator.geolocation.getCurrentPosition(positionSuccess, positionError);
 
 		*/
-			var tid;			
-            var socket = io.connect("http://localhost:8080");
+			var tid;
+			//http://64.180.220.216:8080/
+            var socket = io.connect("http://192.168.1.76:8080");
  
             socket.on('connect', function () {
                 console.log("Connected to server");
