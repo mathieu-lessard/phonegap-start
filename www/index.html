@@ -23,7 +23,7 @@
 			</div>
 		
 			<div data-role="content">
-				<a href="#popupName" data-rel="popup" data-role="button" data-inline="true" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" data-theme="c" aria-haspopup="true" aria-owns="#popupTask" class="ui-btn ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-up-c"><span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">Change Name</span></span></a>
+				<a href="#popupName" data-rel="popup" data-role="button" data-inline="true" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" data-theme="c" aria-haspopup="true" aria-owns="#popupTask" class="ui-btn ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-up-c"><span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">Change Display Name</span></span></a>
 			</div>
 			
 			<div data-role="popup" id="popupName" data-theme="a" data-overlay-theme="a" class="ui-corner-all ui-popup ui-body-a ui-overlay-shadow" aria-disabled="false" data-disabled="false" data-shadow="true" data-corners="true" data-transition="none" data-position-to="window" data-dismissable="false">
@@ -182,7 +182,7 @@
 				);
 			}
 			
-			function getName(){			
+			function getUserData(){			
 				localStorage.uuid = device.uuid;
 				localStorage.name = 'Mathieu';
 				localStorage.task = 'Chillin and being cool';
