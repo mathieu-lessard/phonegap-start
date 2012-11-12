@@ -75,14 +75,14 @@
 	navigator.geolocation.getCurrentPosition(positionSuccess, positionError);
 
 		*/
+			var tid;
+			//http://64.180.220.216:8080/
+			var socket = io.connect("http://192.168.1.8:8080");
+	
 			document.addEventListener("deviceReady", getUserData, false);
 			
 			$(document).bind("mobileinit", function(){
 				
-				var tid;
-				//http://64.180.220.216:8080/
-				var socket = io.connect("http://192.168.1.8:8080");
-	
 				socket.on('connect', function () {
 					console.log("Connected to server");
 					socket.send('{"client": "'+localStorage.uuid+'", "msg":"Hey Server!"}');	
