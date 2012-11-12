@@ -1,0 +1,205 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Big Brother Team Tracker</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1"/>
+		<link rel="stylesheet" href="css/jmobile.css" />
+		<meta name="format-detection" content="telephone=no">
+		<!-- Temporarily have these values? -->
+		<meta http-equiv="CACHE-CONTROL" content="NO-CACHE" />
+		<meta http-equiv="EXPIRES" content="Mon, 01 Jan 2000 00:00:01 GMT" />
+	</head>    
+	<body>        
+		<div id="loginPage" data-role="page" >
+		
+			<div data-role="header" data-position="fixed">
+				<h1>Big Brother Team Tracker</h1>
+				<div data-role="navbar">
+					<ul>
+						<li><a href="client.html">My Tracker</a></li>
+						<li><a href="server.html">Team Tracker</a></li>
+					</ul>
+				</div>
+			</div>
+		
+			<div data-role="content">
+				<a href="#popupName" data-rel="popup" data-role="button" data-inline="true" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" data-theme="c" aria-haspopup="true" aria-owns="#popupTask" class="ui-btn ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-up-c"><span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">Change Display Name</span></span></a>
+			</div>
+			
+			<div data-role="popup" id="popupName" data-theme="a" data-overlay-theme="a" class="ui-corner-all ui-popup ui-body-a ui-overlay-shadow" aria-disabled="false" data-disabled="false" data-shadow="true" data-corners="true" data-transition="none" data-position-to="window" data-dismissable="false">
+				<a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
+				<form id="taskForm">
+					<div style="padding:10px 20px;">
+						<h3>Who Are You!?</h3>
+						<div id="uuid">UUID: </div>
+						<label for="name" class="ui-hidden-accessible ui-input-text">name:</label>
+						<input type="text" name="name" id="name" value="" placeholder="name" data-theme="a" class="ui-input-text ui-body-a ui-corner-all ui-shadow-inset">
+						<button type="submit" data-theme="b" class="ui-btn-hidden" data-disabled="false">Submit</button>
+					</div>
+				</form>
+			</div>
+		</div>v
+		<script src="http://192.168.1.8:8080/socket.io/socket.io.js"></script>
+		<script>
+		/*	
+	function() userData{
+		var realname;
+		var latitude;
+		var longitude;
+		var time;
+		var deviceid;
+		var task;
+
+		for (var n in arguments[0]) { 
+			this[n] = arguments[0][n]; 
+		}		
+	}
+	var positionSuccess  function(position){
+		socket.send(Jsonify(userData({
+			realname:localStorage.user,
+			latitude:position.latitude,
+			longiture:position.longitude,
+			altitude:position.altitude,
+			accuracy:position.accuracy,
+			altitudeaccuracy:position.altidudeAccuracy,
+			time:position.timestamp,
+			deviceid:device.name,
+			task:localStorage.task
+		})));
+	};
+	
+	function positionError(error) {
+		console.log('code: ' + error.code + '\n' + 'message: ' + error.message +'\n');
+	};
+	
+	//This line goes in the timer!
+	
+
+		*/
+	
+			
+			$(document).bind("mobileinit", function(){
+				document.addEventListener("deviceReady", getUserData, false);
+				//http://64.180.220.216:8080/
+				var socket = io.connect("http://192.168.1.8:8080");
+				var watching = null;
+				
+				socket.on('connect', function () {
+					console.log("Connected to server");
+					socket.send('{"client": "'+localStorage.uuid+'", "msg":"Hey Server!"}');	
+					socket.on('message', function(message) {
+					//do nothing yet
+					});
+					socket.on('disconnect', function() {
+						console.log("Disconnected from server");
+					});
+				});
+				/************************************
+							index.html
+				************************************/
+				$('#loginPage').live('pagebeforeshow', function(event) {
+					$('#uuid').html('UUID: '+localStorage.uuid);
+					
+					$("#loginForm").submit(function() {
+						localStorage.name = $("#name").val();
+						return false;
+					});
+				
+					if(typeof(Storage)!=="undefined"){
+						//Fill in form
+					}else{
+						alert("No Local Storage. Contact Developer.");
+					}
+				});
+				
+				/************************************
+							client.html
+				************************************/
+				
+				$('#client').live('pagebeforeshow', function(event) {
+				
+					$('#taskText').html(localStorage.task);
+					
+					$("#taskForm").submit(function() {
+						localStorage.task = $("#task").val();	
+						$("#popupTask").popup("close");
+						$('#taskText').html(localStorage.task);
+						return false;
+					});
+					
+					$('#popupTask').bind('popupafteropen', function(){
+						$('#task').focus();
+					});
+					
+					$( ".selector" ).bind( "change", function(event, ui) {
+						if(!watching){
+							console.log("Starting Tracker");
+							options = { maximumAge: 3000, timeout: 5000, enableHighAccuracy: true };
+							watching = navigator.geolocation.getCurrentPosition(positionSuccess, positionError, options);
+						}else{
+							navigator.geolocation.clearWatch(watching);
+							watching = null;
+						}
+					});
+				});
+				
+				/************************************
+							myhistory.html
+				************************************/
+				
+				$('#myhistory').live('pagebeforeshow', function(event) {
+					getMyHistory();
+					$('#refreshMyHistory').live('click', getMyHistory);
+				});
+			});
+			
+				
+			function getLastTask(){
+				//Give default task if none exists
+				if(!localStorage.task){
+					localStorage.task = "No Task";
+				}
+				
+				//Server call for finding the last task. Only change if task has not been modified.
+			}
+			
+			function getMyHistory(){
+				$('#refreshMyHistory').die('click');
+				$.getJSON("http://192.168.1.8:8124?callback=?",
+					{
+						client: localStorage.uuid
+					},
+					function(data) {
+						$("#myHistoryContent").html(data);
+						$('#refreshMyHistory').removeClass('ui-btn-active');	
+						$('#refreshMyHistory').live('click', getMyHistory);					
+					}
+				);
+			}
+			
+			function getUserData(){
+				localStorage.uuid = device.uuid;
+				localStorage.name = 'Mathieu';
+				localStorage.task = 'Chillin and being cool';
+				console.log(localStorage.uuid);
+				console.log(localStorage.name);
+				console.log(localStorage.task);
+			}
+			
+			/************************************
+						client code
+			************************************/
+			function positionSuccess(position){
+				console.log("Send Position");
+				socket.send('{"client": "'+localStorage.uuid+'", "msg":{"task":"'+localStorage.task+'","location":"'+'"}}');
+			}
+			function positionError(){
+				console.log("Send Position");
+				socket.send('{"client": "'+localStorage.uuid+'", "msg":{"task":"","location":""}}');
+			}
+		</script>
+		<script src="js/jquery.js"></script>
+		<script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+		<script src="js/jmobile.js"></script>
+	</body>
+</html>
