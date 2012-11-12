@@ -38,51 +38,19 @@
 					</div>
 				</form>
 			</div>
-		</div>v
+		</div>
+		<script src="js/jquery.js"></script>
+		<script type="text/javascript" charset="utf-8" src="cordova.js"></script>
 		<script src="http://192.168.1.8:8080/socket.io/socket.io.js"></script>
 		<script>
-		/*	
-	function() userData{
-		var realname;
-		var latitude;
-		var longitude;
-		var time;
-		var deviceid;
-		var task;
-
-		for (var n in arguments[0]) { 
-			this[n] = arguments[0][n]; 
-		}		
-	}
-	var positionSuccess  function(position){
-		socket.send(Jsonify(userData({
-			realname:localStorage.user,
-			latitude:position.latitude,
-			longiture:position.longitude,
-			altitude:position.altitude,
-			accuracy:position.accuracy,
-			altitudeaccuracy:position.altidudeAccuracy,
-			time:position.timestamp,
-			deviceid:device.name,
-			task:localStorage.task
-		})));
-	};
-	
-	function positionError(error) {
-		console.log('code: ' + error.code + '\n' + 'message: ' + error.message +'\n');
-	};
-	
-	//This line goes in the timer!
-	
-
-		*/
-	
+			var socket;
+			var watching;
 			
 			$(document).bind("mobileinit", function(){
 				document.addEventListener("deviceReady", getUserData, false);
 				//http://64.180.220.216:8080/
-				var socket = io.connect("http://192.168.1.8:8080");
-				var watching = null;
+				socket = io.connect("http://192.168.1.8:8080");
+				watching = null;
 				
 				socket.on('connect', function () {
 					console.log("Connected to server");
@@ -198,8 +166,6 @@
 				socket.send('{"client": "'+localStorage.uuid+'", "msg":{"task":"","location":""}}');
 			}
 		</script>
-		<script src="js/jquery.js"></script>
-		<script type="text/javascript" charset="utf-8" src="cordova.js"></script>
 		<script src="js/jmobile.js"></script>
 	</body>
 </html>
