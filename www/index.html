@@ -190,7 +190,7 @@
 			************************************/
 			function positionSuccess(position){
 				console.log("Send Position");
-				socket.send('{"client": "'+localStorage.uuid+'", "msg":{"task":"'+localStorage.task+'","location":"'++'"}}');
+				socket.send('{"client": "'+localStorage.uuid+'", "msg":{"task":"'+localStorage.task+'","location":"'+'"}}');
 			}
 			function positionError(){
 				console.log("Send Position");
