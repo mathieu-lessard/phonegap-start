@@ -72,12 +72,12 @@
 	};
 	
 	//This line goes in the timer!
-	navigator.geolocation.getCurrentPosition(positionSuccess, positionError);
+	
 
 		*/
-			var tid;
 			//http://64.180.220.216:8080/
 			var socket = io.connect("http://192.168.1.8:8080");
+			var watching = null;
 	
 			document.addEventListener("deviceReady", getUserData, false);
 			
@@ -130,21 +130,15 @@
 						$('#task').focus();
 					});
 					
-					$('#startTracker').live('click', function(){
-						console.log("Starting Tracker");
-						sendPosition();
-						tid = setInterval(sendPosition, 5000);
-						$(this).attr('id', 'stopTracker')
-							.addClass('ui-btn-active')
-							.html('<span class="ui-btn-inner"><span class="ui-btn-text">Stop Tracker</span></span>');
-					});
-					
-					$('#stopTracker').live('click', function(){
-						clearInterval(tid);
-						console.log("Stopping Tracker");
-						$(this).attr('id', 'startTracker')
-							.removeClass('ui-btn-active')
-							.html('<span class="ui-btn-inner"><span class="ui-btn-text">Start Tracker</span></span>');
+					$( ".selector" ).bind( "change", function(event, ui) {
+						if(!watching){
+							console.log("Starting Tracker");
+							options = { maximumAge: 3000, timeout: 5000, enableHighAccuracy: true };
+							watching = navigator.geolocation.getCurrentPosition(positionSuccess, positionError, options);
+						}else{
+							navigator.geolocation.clearWatch(watching);
+							watching = null;
+						}
 					});
 				});
 				
@@ -194,7 +188,11 @@
 			/************************************
 						client code
 			************************************/
-			function sendPosition(){
+			function positionSuccess(position){
+				console.log("Send Position");
+				socket.send('{"client": "'+localStorage.uuid+'", "msg":{"task":"'+localStorage.task+'","location":"'++'"}}');
+			}
+			function positionError(){
 				console.log("Send Position");
 				socket.send('{"client": "'+localStorage.uuid+'", "msg":{"task":"","location":""}}');
 			}
