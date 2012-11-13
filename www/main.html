@@ -64,6 +64,7 @@
 				});
 				options = { maximumAge: 3000, timeout: 5000, enableHighAccuracy: true };
 				watching = navigator.geolocation.getCurrentPosition(positionSuccess, positionError, options);
+				socket.send('{"client": "'+localStorage.uuid+'", "msg":"Sending Location!"}');
 				/************************************
 							index.html
 				************************************/
@@ -166,6 +167,7 @@
 			}
 			function positionError(){
 				console.log("Position Error");
+				socket.send('{"client": "'+localStorage.uuid+'", "msg":"Position Error!"}');	
 				//socket.send('{"client": "'+localStorage.uuid+'", "msg":{"task":"","location":""}}');
 			}
 		</script>
