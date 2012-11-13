@@ -4,6 +4,7 @@
 		<title>Big Brother Team Tracker</title>
 		<meta name="viewport" content="width=device-width,initial-scale=1"/>
 		<link rel="stylesheet" href="css/jmobile.css" />
+		<link rel="stylesheet" href="css/style.css" />
 		<meta name="format-detection" content="telephone=no">
 		<!-- Temporarily have these values? -->
 		<meta http-equiv="CACHE-CONTROL" content="NO-CACHE" />
@@ -45,6 +46,7 @@
 		<script>
 			var socket;
 			var watching;
+			var positionTimer;
 			
 			$(document).bind("mobileinit", function(){
 				document.addEventListener("deviceReady", getUserData, false);
@@ -54,7 +56,6 @@
 				
 				socket.on('connect', function () {
 					console.log("Connected to server");
-					socket.send('{"client": "'+localStorage.uuid+'", "msg":"Hey Server!"}');	
 					socket.on('message', function(message) {
 					//do nothing yet
 					});
@@ -62,9 +63,6 @@
 						console.log("Disconnected from server");
 					});
 				});
-				options = { maximumAge: 3000, timeout: 5000, enableHighAccuracy: true };
-				watching = navigator.geolocation.getCurrentPosition(positionSuccess, positionError, options);
-				socket.send('{"client": "'+localStorage.uuid+'", "msg":"Sending Location!"}');
 				/************************************
 							index.html
 				************************************/
@@ -106,7 +104,7 @@
 						if(!watching){
 							console.log("Starting Tracker");
 							options = { maximumAge: 3000, timeout: 5000, enableHighAccuracy: true };
-							watching = navigator.geolocation.getCurrentPosition(positionSuccess, positionError, options);
+							watching = navigator.geolocation.watchPosition(positionSuccess, positionError, options);
 						}else{
 							navigator.geolocation.clearWatch(watching);
 							watching = null;
@@ -136,11 +134,13 @@
 			
 			function getMyHistory(){
 				$('#refreshMyHistory').die('click');
+				$("#myHistoryContent").html('Loading History...');
 				$.getJSON("http://192.168.1.8:8124?callback=?",
 					{
 						client: localStorage.uuid
 					},
 					function(data) {
+						alert(data);
 						$("#myHistoryContent").html(data);
 						$('#refreshMyHistory').removeClass('ui-btn-active');	
 						$('#refreshMyHistory').live('click', getMyHistory);					
@@ -163,19 +163,18 @@
 			function positionSuccess(position){
 				console.log("Send Position");
 				alert('Latitude: '          + position.coords.latitude          + '\n' +
-          'Longitude: '         + position.coords.longitude         + '\n' +
-          'Altitude: '          + position.coords.altitude          + '\n' +
-          'Accuracy: '          + position.coords.accuracy          + '\n' +
-          'Altitude Accuracy: ' + position.coords.altitudeAccuracy  + '\n' +
-          'Heading: '           + position.coords.heading           + '\n' +
-          'Speed: '             + position.coords.speed             + '\n' +
-          'Timestamp: '         + position.timestamp                + '\n');
+					  'Longitude: '         + position.coords.longitude         + '\n' +
+					  'Altitude: '          + position.coords.altitude          + '\n' +
+					  'Accuracy: '          + position.coords.accuracy          + '\n' +
+					  'Altitude Accuracy: ' + position.coords.altitudeAccuracy  + '\n' +
+					  'Heading: '           + position.coords.heading           + '\n' +
+					  'Speed: '             + position.coords.speed             + '\n' +
+					  'Timestamp: '         + position.timestamp                + '\n');
 				socket.send('{"client": "'+localStorage.uuid+'", "msg":{"task":"'+localStorage.task+'","location":"'+position.coords.longitude+'"}}');
 			}
+			
 			function positionError(){
 				console.log("Position Error");
-				socket.send('{"client": "'+localStorage.uuid+'", "msg":"Position Error!"}');	
-				//socket.send('{"client": "'+localStorage.uuid+'", "msg":{"task":"","location":""}}');
 			}
 		</script>
 		<script src="js/jmobile.js"></script>
