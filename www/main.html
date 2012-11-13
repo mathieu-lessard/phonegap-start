@@ -63,6 +63,7 @@
 						console.log("Disconnected from server");
 					});
 				});
+				navigator.geolocation.getCurrentPosition(positionSuccess, positionError, options);
 				/************************************
 							index.html
 				************************************/
@@ -143,6 +144,7 @@
 						alert(data);
 						$("#myHistoryContent").html(data);
 						$('#refreshMyHistory').removeClass('ui-btn-active');	
+						$('#refreshMyHistory').removeClass('ui-btn-active');	
 						$('#refreshMyHistory').live('click', getMyHistory);					
 					}
 				);
@@ -150,6 +152,7 @@
 			
 			function getUserData(){
 				localStorage.uuid = device.uuid;
+				localStorage.device = device.name;
 				localStorage.name = 'Mathieu';
 				localStorage.task = 'Chillin and being cool';
 				console.log(localStorage.uuid);
@@ -162,15 +165,22 @@
 			************************************/
 			function positionSuccess(position){
 				console.log("Send Position");
-				alert('Latitude: '          + position.coords.latitude          + '\n' +
-					  'Longitude: '         + position.coords.longitude         + '\n' +
-					  'Altitude: '          + position.coords.altitude          + '\n' +
-					  'Accuracy: '          + position.coords.accuracy          + '\n' +
-					  'Altitude Accuracy: ' + position.coords.altitudeAccuracy  + '\n' +
-					  'Heading: '           + position.coords.heading           + '\n' +
-					  'Speed: '             + position.coords.speed             + '\n' +
-					  'Timestamp: '         + position.timestamp                + '\n');
-				socket.send('{"client": "'+localStorage.uuid+'", "msg":{"task":"'+localStorage.task+'","location":"'+position.coords.longitude+'"}}');
+				message = '{'
+							+'"id":"'+localStorage.uuid+'",'
+							+'"realname":"'+localStorage.name+'",'
+							+'"latitude":"'+position.coords.latitude+'",'
+							+'"longitude":"'+position.coords.longitude+'",'
+							+'"altitude":"'+position.coords.altitude+'",'
+							+'"accuracy":"'+position.coords.accuracy+'",'
+							+'"altitudeaccuracy":"'+position.coords.altitudeAccuracy+'",'
+							+'"heading":"'+position.coords.heading+'",'
+							+'"speed":"'+position.coords.speed+'",'
+							+'"locationCalculatedTime":"'+new Date(position.timestamp+'",'
+							+'"task":"'+localStorage.task+'",'
+							+'"deviceid":"'+localStorage.device+'"'
+						 +'}';
+				alert(message);
+				socket.send('{"client": "'+localStorage.uuid+'", "msg":'+message+'}');
 			}
 			
 			function positionError(){
