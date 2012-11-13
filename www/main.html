@@ -23,12 +23,12 @@
 			</div>
 		
 			<div data-role="content">
-				<a href="#popupName" data-rel="popup" data-role="button" data-inline="true" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" data-theme="c" aria-haspopup="true" aria-owns="#popupTask" class="ui-btn ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-up-c"><span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">Change Display Name</span></span></a>
+				<a href="#popupName" data-rel="popup" data-role="button" data-inline="true" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" data-theme="c" aria-haspopup="true" aria-owns="#popupName" class="ui-btn ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-up-c"><span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">Change Display Name</span></span></a>
 			</div>
 			
 			<div data-role="popup" id="popupName" data-theme="a" data-overlay-theme="a" class="ui-corner-all ui-popup ui-body-a ui-overlay-shadow" aria-disabled="false" data-disabled="false" data-shadow="true" data-corners="true" data-transition="none" data-position-to="window" data-dismissable="false">
 				<a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
-				<form id="taskForm">
+				<form id="nameForm" data-ajax="false">
 					<div style="padding:10px 20px;">
 						<h3>Who Are You!?</h3>
 						<div id="uuid">UUID: </div>
@@ -68,7 +68,7 @@
 				$('#loginPage').live('pagebeforeshow', function(event) {
 					$('#uuid').html('UUID: '+localStorage.uuid);
 					
-					$("#loginForm").submit(function() {
+					$("#nameForm").submit(function() {
 						localStorage.name = $("#name").val();
 						return false;
 					});
@@ -159,11 +159,12 @@
 			************************************/
 			function positionSuccess(position){
 				console.log("Send Position");
-				socket.send('{"client": "'+localStorage.uuid+'", "msg":{"task":"'+localStorage.task+'","location":"'+'"}}');
+				console.log('{"client": "'+localStorage.uuid+'", "msg":{"task":"'+localStorage.task+'","location":"'+'"}}');
+				//socket.send('{"client": "'+localStorage.uuid+'", "msg":{"task":"'+localStorage.task+'","location":"'+'"}}');
 			}
 			function positionError(){
 				console.log("Send Position");
-				socket.send('{"client": "'+localStorage.uuid+'", "msg":{"task":"","location":""}}');
+				//socket.send('{"client": "'+localStorage.uuid+'", "msg":{"task":"","location":""}}');
 			}
 		</script>
 		<script src="js/jmobile.js"></script>
