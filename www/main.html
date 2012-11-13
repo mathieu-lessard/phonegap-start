@@ -63,6 +63,7 @@
 						console.log("Disconnected from server");
 					});
 				});
+				options = { maximumAge: 3000, timeout: 5000, enableHighAccuracy: true };
 				navigator.geolocation.getCurrentPosition(positionSuccess, positionError, options);
 				/************************************
 							index.html
