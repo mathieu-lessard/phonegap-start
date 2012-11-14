@@ -25,6 +25,12 @@
 		
 			<div data-role="content">
 				<a href="#popupName" data-rel="popup" data-role="button" data-inline="true" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" data-theme="c" aria-haspopup="true" aria-owns="#popupName" class="ui-btn ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-up-c"><span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">Change Display Name</span></span></a>
+								<div class="containing-element">
+					<select name="track" id="track" data-role="slider">
+						<option value="off">Tracking Off</option>
+						<option value="on">Tracking On</option>
+					</select>
+				</div>
 			</div>
 			
 			<div data-role="popup" id="popupName" data-theme="a" data-overlay-theme="a" class="ui-corner-all ui-popup ui-body-a ui-overlay-shadow" aria-disabled="false" data-disabled="false" data-shadow="true" data-corners="true" data-transition="none" data-position-to="window" data-dismissable="false">
@@ -102,12 +108,17 @@
 						$('#task').focus();
 					});
 					
-					$( ".selector" ).bind( "change", function(event, ui) {
+					if(watching)
+						$('select#track').val('on').slider('refresh');
+						
+					$('select#track').bind('change', function() {
 						if(!watching){
+							alert('Tracking On');
 							console.log("Starting Tracker");
 							options = { maximumAge: 3000, timeout: 5000, enableHighAccuracy: true };
 							watching = navigator.geolocation.watchPosition(positionSuccess, positionError, options);
 						}else{
+							alert('Tracking Off');
 							navigator.geolocation.clearWatch(watching);
 							watching = null;
 						}
@@ -120,7 +131,6 @@
 				
 				$('#myhistory').live('pagebeforeshow', function(event) {
 					getMyHistory();
-					$('#refreshMyHistory').live('click', getMyHistory);
 				});
 			});
 			
@@ -137,15 +147,16 @@
 			function getMyHistory(){
 				$('#refreshMyHistory').die('click');
 				$("#myHistoryContent").html('Loading History...');
+				alert('Message Sent')
 				$.getJSON("http://192.168.1.8:8124?callback=?",
 					{
 						client: localStorage.uuid
 					},
 					function(data) {
-						alert(data);
+						data = data.replace(/\n/g, '<br>');
 						$("#myHistoryContent").html(data);
-						$('#refreshMyHistory').removeClass('ui-btn-active');	
-						$('#refreshMyHistory').removeClass('ui-btn-active');	
+						alert(data);
+						$('#refreshMyHistory').removeClass('ui-btn-active');
 						$('#refreshMyHistory').live('click', getMyHistory);					
 					}
 				);
