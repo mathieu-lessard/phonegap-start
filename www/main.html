@@ -153,6 +153,7 @@
 						client: localStorage.uuid
 					},
 					function(data) {
+						alert('Message Replied');
 						data = data.replace(/\n/g, '<br>');
 						$("#myHistoryContent").html(data);
 						alert(data);
