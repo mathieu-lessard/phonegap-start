@@ -147,16 +147,14 @@
 			function getMyHistory(){
 				$('#refreshMyHistory').die('click');
 				$("#myHistoryContent").html('Loading History...');
-				alert('Message Sent')
 				$.getJSON("http://192.168.1.8:8124?callback=?",
 					{
 						client: localStorage.uuid
 					},
 					function(data) {
-						alert('Message Replied');
+						data = decodeURIComponent(data);
 						data = data.replace(/\n/g, '<br>');
 						$("#myHistoryContent").html(data);
-						alert(data);
 						$('#refreshMyHistory').removeClass('ui-btn-active');
 						$('#refreshMyHistory').live('click', getMyHistory);					
 					}
