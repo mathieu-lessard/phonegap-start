@@ -57,6 +57,7 @@
 			var socket;
 			var watching;
 			var positionTimer;
+			var options = { maximumAge: 3000, timeout: 5000, enableHighAccuracy: true };
 			
 			$(document).bind("mobileinit", function(){
 					getMyHistory();
@@ -74,7 +75,6 @@
 						console.log("Disconnected from server");
 					});
 				});
-				options = { maximumAge: 3000, timeout: 5000, enableHighAccuracy: true };
 				navigator.geolocation.getCurrentPosition(positionSuccess, positionError, options);
 				/************************************
 							index.html
@@ -103,7 +103,8 @@
 					$('#taskText').html(localStorage.task);
 					
 					$("#taskForm").submit(function() {
-						localStorage.task = $("#task").val();	
+						localStorage.task = $("#task").val();
+						navigator.geolocation.getCurrentPosition(positionSuccess, positionError, options);
 						$("#popupTask").popup("close");
 						$('#taskText').html(localStorage.task);
 						return false;
@@ -120,7 +121,6 @@
 						if(!watching){
 							alert('Tracking On');
 							console.log("Starting Tracker");
-							options = { maximumAge: 3000, timeout: 5000, enableHighAccuracy: true };
 							watching = navigator.geolocation.watchPosition(positionSuccess, positionError, options);
 						}else{
 							alert('Tracking Off');
@@ -154,10 +154,9 @@
 				$("#myHistoryContent").html('Loading History...');
 				$.getJSON("http://192.168.1.8:8124?callback=?",
 					{
-						client: "9774d56d682e549c"
+						client: device.uuid
 					},
 					function(data) {
-						data = decodeURIComponent(data);
 						data = data.replace(/\n/g, '<br>');
 						$("#myHistoryContent").html(data);
 						$('#refreshMyHistory').removeClass('ui-btn-active');
@@ -168,21 +167,25 @@
 			
 			function getUserData(){
 				localStorage.uuid = device.uuid;
-				localStorage.device = device.name;
+				localStorage.device = device.name;			
 				localStorage.name = 'Mathieu';
-				localStorage.task = 'Chillin and being cool';
-				console.log(localStorage.uuid);
-				console.log(localStorage.name);
-				console.log(localStorage.task);
+				localStorage.task = 'Chillin and being cool';	
+				/*$.getJSON("http://192.168.1.8:8124?callback=?",
+					{
+						client: device.uuid
+					},
+					function(data) {
+					
+					}
+				);*/
 			}
 			
 			/************************************
 						client code
 			************************************/
 			function positionSuccess(position){
-				console.log("Send Position");
 				message = '{'
-							+'"id":"'+localStorage.uuid+'",'
+							+'"id":"'+device.uuid+'",'
 							+'"realname":"'+localStorage.name+'",'
 							+'"latitude":"'+position.coords.latitude+'",'
 							+'"longitude":"'+position.coords.longitude+'",'
@@ -193,10 +196,9 @@
 							+'"speed":"'+position.coords.speed+'",'
 							+'"locationCalculatedTime":"'+new Date(position.timestamp)+'",'
 							+'"task":"'+localStorage.task+'",'
-							+'"deviceid":"'+localStorage.device+'"'
+							+'"deviceid":"'+device.name+'"'
 						 +'}';
-				alert(message);
-				socket.send('{"client": "'+localStorage.uuid+'", "msg":'+message+'}');
+				socket.send('{"client": "'+device.uuid+'", "msg":'+message+'}');
 			}
 			
 			function positionError(){
