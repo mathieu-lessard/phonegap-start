@@ -154,7 +154,7 @@
 				$("#myHistoryContent").html('Loading History...');
 				$.getJSON("http://192.168.1.8:8124?callback=?",
 					{
-						client:localStorage.device
+						client:localStorage.uuid
 					},
 					function(data) {
 						data = data.replace(/\n/g, '<br>');
