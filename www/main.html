@@ -48,13 +48,18 @@
 		</div>
 		<script src="js/jquery.js"></script>
 		<script type="text/javascript" charset="utf-8" src="cordova.js"></script>
-		<script src="http://192.168.1.8:8080/socket.io/socket.io.js"></script>
+		<script src="js/socket.io/socket.io.js"></script>
+		<script type="text/javascript" src="js/DataOperations.js"></script>
+		<script type="text/javascript" src="js/maps/MapStructs.js"></script>	
+		<script type="text/javascript" src="js/maps/GMapOperator.js"></script>
+		<script type="text/javascript" src="js/TrackerOperator.js"></script>
 		<script>
 			var socket;
 			var watching;
 			var positionTimer;
 			
 			$(document).bind("mobileinit", function(){
+					getMyHistory();
 				document.addEventListener("deviceReady", getUserData, false);
 				//http://64.180.220.216:8080/
 				socket = io.connect("http://192.168.1.8:8080");
@@ -149,7 +154,7 @@
 				$("#myHistoryContent").html('Loading History...');
 				$.getJSON("http://192.168.1.8:8124?callback=?",
 					{
-						client: localStorage.uuid
+						client: "9774d56d682e549c"
 					},
 					function(data) {
 						data = decodeURIComponent(data);
