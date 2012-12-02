@@ -48,7 +48,7 @@
 		</div>
 		<script src="js/jquery.js"></script>
 		<script type="text/javascript" charset="utf-8" src="cordova.js"></script>
-		<script src="js/socket.io/socket.io.js"></script>
+		<script src="http://192.168.1.8:8080/socket.io/socket.io.js"></script>
 		<script type="text/javascript" src="js/DataOperations.js"></script>
 		<script type="text/javascript" src="js/maps/MapStructs.js"></script>	
 		<script type="text/javascript" src="js/maps/GMapOperator.js"></script>
@@ -154,7 +154,7 @@
 				$("#myHistoryContent").html('Loading History...');
 				$.getJSON("http://192.168.1.8:8124?callback=?",
 					{
-						client: device.uuid
+						client:localStorage.device
 					},
 					function(data) {
 						data = data.replace(/\n/g, '<br>');
@@ -185,7 +185,7 @@
 			************************************/
 			function positionSuccess(position){
 				message = '{'
-							+'"id":"'+device.uuid+'",'
+							+'"id":"'+localStorage.uuid+'",'
 							+'"realname":"'+localStorage.name+'",'
 							+'"latitude":"'+position.coords.latitude+'",'
 							+'"longitude":"'+position.coords.longitude+'",'
@@ -196,9 +196,9 @@
 							+'"speed":"'+position.coords.speed+'",'
 							+'"locationCalculatedTime":"'+new Date(position.timestamp)+'",'
 							+'"task":"'+localStorage.task+'",'
-							+'"deviceid":"'+device.name+'"'
+							+'"deviceid":"'+localStorage.device+'"'
 						 +'}';
-				socket.send('{"client": "'+device.uuid+'", "msg":'+message+'}');
+				socket.send('{"client": "'+localStorage.uuid+'", "msg":'+message+'}');
 			}
 			
 			function positionError(){
