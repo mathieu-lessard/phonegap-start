@@ -90,7 +90,19 @@
 						//Fill in form
 					}else{
 						alert("No Local Storage. Contact Developer.");
-					}
+					}					
+					
+					if(watching)
+						$('select#track').val('on').slider('refresh');
+						
+					$('select#track').bind('change', function() {
+						if(!watching){
+							watching = navigator.geolocation.watchPosition(positionSuccess, positionError, options);
+						}else{
+							navigator.geolocation.clearWatch(watching);
+							watching = null;
+						}
+					});
 				});
 				
 				/************************************
@@ -118,9 +130,9 @@
 						$('select#track').val('on').slider('refresh');
 						
 					$('select#track').bind('change', function() {
+					alert(watching);
 						if(!watching){
 							alert('Tracking On');
-							console.log("Starting Tracker");
 							watching = navigator.geolocation.watchPosition(positionSuccess, positionError, options);
 						}else{
 							alert('Tracking Off');
@@ -158,8 +170,7 @@
 					trackerOp.getClientList();
 				});
 				
-			});
-			
+			});			
 				
 			function getLastTask(){
 				//Give default task if none exists
