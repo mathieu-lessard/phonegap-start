@@ -67,12 +67,9 @@
 				************************************/
 				//Tracking Slider
 				$('select#track').on('slidestop', function() {
-				alert(watching);
 					if(!watching){
-						alert('Tracking On');
 						watching = navigator.geolocation.watchPosition(positionSuccess, positionError, options);
 					}else{
-						alert('Tracking Off');
 						navigator.geolocation.clearWatch(watching);
 						watching = null;
 					}
@@ -169,8 +166,8 @@
 					},
 					function(data) {
 						data = decodeURIComponent(data);
-						data = data.replace(/\n/g, '<br><br>').replace(/,/g, '<br>').replace(/[{|}|"]/g,'');
-						$("#myHistoryContent").html();
+						data = data.replace(/\n/g, '<br><br>').replace(/","/g, '<br>').replace(/[{|}|"]/g,'');
+						$("#myHistoryContent").html(data);
 						$('#refreshMyHistory').removeClass('ui-btn-active');
 						$('#refreshMyHistory').live('click', getMyHistory);					
 					}
