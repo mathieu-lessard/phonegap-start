@@ -30,6 +30,7 @@
 						<option value="on">Tracking On</option>
 					</select>
 				</div>
+				<br>
 				<div id="map" style="height:100%;width:100%;"></div>	
 			</div>
 		</div>
@@ -82,7 +83,6 @@
 				************************************/
 				$('#loginPage').live('pagebeforeshow', function(event) {
 					$('#uuid').html('UUID: '+localStorage.uuid);
-					alert($(window).height())
 					if(typeof(Storage)!=="undefined"){
 						//Fill in form
 					}else{
@@ -91,6 +91,7 @@
 					
 					if(watching)
 						$('select#track').val('on').slider('refresh');
+				}).live('pageshow', function(event){
 					loadMap();
 				});
 				
@@ -100,8 +101,7 @@
 				
 				$('#client').live('pagebeforeshow', function(event) {
 				
-					$('#taskText').html(localStorage.task);
-					
+					$('#taskText').html(localStorage.task);					
 					
 					if(watching)
 						$('select#track').val('on').slider('refresh');
