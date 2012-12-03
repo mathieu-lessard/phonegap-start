@@ -18,7 +18,7 @@
 				<div data-role="navbar">
 					<ul>
 						<li><a href="client.html">My Tracker</a></li>
-						<li><a href="map.html">Team Tracker</a></li>
+						<li><a href="table.html">Team Tracker</a></li>
 					</ul>
 				</div>
 			</div>
@@ -30,6 +30,7 @@
 						<option value="on">Tracking On</option>
 					</select>
 				</div>
+				<div id="map" style="height:100%;width:100%;"></div>	
 			</div>
 		</div>
 		<script src="js/jquery.js"></script>
@@ -90,6 +91,7 @@
 					
 					if(watching)
 						$('select#track').val('on').slider('refresh');
+					loadMap();
 				});
 				
 				/************************************
@@ -137,14 +139,6 @@
 				
 				$('#table').live('pagebeforeshow', function(event) {
 					getTeamData();
-				});
-				
-				/************************************
-							map.html
-				************************************/
-				
-				$('#map').bind('pageshow', function(event) {
-					loadMap();
 				});
 				
 			});			
