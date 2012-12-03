@@ -44,6 +44,7 @@
 			var watching;
 			var positionTimer;
 			var options = { maximumAge: 3000, timeout: 5000, enableHighAccuracy: true };
+			var mapOperator = new MapOperator();
 			
 			$(document).bind("mobileinit", function(){
 					getMyHistory();
@@ -142,7 +143,7 @@
 							map.html
 				************************************/
 				
-				$('#map').live('pagebeforeshow', function(event) {
+				$('#map').bind('pageshow', function(event) {
 					loadMap();
 				});
 				
@@ -219,8 +220,8 @@
 				}
 			}
 			
-			function loadMap(){			
-				var mapOperator = new MapOperator();
+			function loadMap(){
+				$('#map').css('height',$(window).height());
 				var initialLoc = new MapStruct.Location({latitude:49.193820,longitude:-123.984489,altitude:13}); 
 				mapOperator.initialize(document.getElementById("map"), initialLoc);
 				var trackerOp = new TrackerOperator('http://192.168.1.8:8124', mapOperator, 5000, 30000);			
