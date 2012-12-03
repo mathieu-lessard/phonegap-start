@@ -5,7 +5,7 @@ function processJSON(MAP, json){
 		var visible = true;
 		
 		if (typeof TRACKER.users[id] == "undefined"){		
-			var userMarker = MAP.putMarker(location, "css/img/person.png", visible);
+			var userMarker = MAP.putMarker(location, "css/images/person.png", visible);
 			var iWindow = MAP.initializeInfoWindow();
 			var markerInfoWindow = new MapStruct.MapMarker({marker:userMarker, infoWindow:iWindow});
 			
