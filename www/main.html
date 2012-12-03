@@ -36,7 +36,8 @@
 		</div>
 		<script src="js/jquery.js"></script>
 		<script type="text/javascript" charset="utf-8" src="cordova.js"></script>
-		<script src="http://192.168.1.8:8080/socket.io/socket.io.js"></script>
+		<!--<script src="http://192.168.1.8:8080/socket.io/socket.io.js"></script>-->
+		<script src="http://64.180.220.216:8080/socket.io/socket.io.js"></script>
 		<script type="text/javascript" src="js/DataOperations.js"></script>
 		<script type="text/javascript" src="js/maps/MapStructs.js"></script>	
 		<script type="text/javascript" src="js/maps/GMapOperator.js"></script>
@@ -51,8 +52,8 @@
 			$(document).bind("mobileinit", function(){
 					getMyHistory();
 				document.addEventListener("deviceReady", getUserData, false);
-				//http://64.180.220.216:8080/
-				socket = io.connect("http://192.168.1.8:8080");
+				//socket = io.connect("http://192.168.1.8:8080");
+				socket = io.connect("http://64.180.220.216:8080");
 				watching = null;
 				
 				socket.on('connect', function () {
@@ -155,7 +156,8 @@
 			function getMyHistory(){
 				$('#refreshMyHistory').die('click');
 				$("#myHistoryContent").html('Loading History...');
-				$.getJSON("http://192.168.1.8:8124?callback=?",
+				//$.getJSON("http://192.168.1.8:8124?callback=?",
+				$.getJSON("http://64.180.220.216:8124?callback=?",
 					{
 						client:localStorage.uuid
 					},
@@ -172,7 +174,8 @@
 			function getTeamData(){
 				$('#refreshTable').die('click');
 				$("#myTeamTable").html('Loading Data...');
-				$.getJSON("http://192.168.1.8:8124?callback=?",
+				//$.getJSON("http://192.168.1.8:8124?callback=?",
+				$.getJSON("http://64.180.220.216:8124?callback=?",
 					{
 						client:'users'
 					},
@@ -197,7 +200,8 @@
 					//Temporary values. This will be used if there is no data
 					localStorage.name = "new user";
 					localStorage.task = "no task";
-					$.getJSON("http://192.168.1.8:8124?callback=?",
+				//$.getJSON("http://192.168.1.8:8124?callback=?",
+				$.getJSON("http://64.180.220.216:8124?callback=?",
 						{
 							client:'users'
 						},
@@ -218,7 +222,8 @@
 				$('#map').css('height',$(window).height());
 				var initialLoc = new MapStruct.Location({latitude:49.193820,longitude:-123.984489,altitude:13}); 
 				mapOperator.initialize(document.getElementById("map"), initialLoc);
-				var trackerOp = new TrackerOperator('http://192.168.1.8:8124', mapOperator, 5000, 30000);			
+				//var trackerOp = new TrackerOperator('http://192.168.1.8:8124', mapOperator, 5000, 30000);
+				var trackerOp = new TrackerOperator('http://64.180.220.216:8124', mapOperator, 5000, 30000);			
 				trackerOp.getClientList();
 			}
 			
