@@ -14,14 +14,9 @@
 				</div>
 			</div>
 			<div data-role="content">
+				<a href="#popupName" data-rel="popup" data-role="button" data-inline="true" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" data-theme="c" aria-haspopup="true" aria-owns="#popupName" class="ui-btn ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-up-c"><span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">Change Display Name</span></span></a>
 				<a href="#popupTask" data-rel="popup" data-role="button" data-inline="true" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" data-theme="c" aria-haspopup="true" aria-owns="#popupTask" class="ui-btn ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-up-c"><span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">Change Task</span></span></a><br/>
 				<div id="taskText"></div><br/>
-				<div class="containing-element">
-					<select name="track" id="track" data-role="slider">
-						<option value="off">Tracking Off</option>
-						<option value="on">Tracking On</option>
-					</select>
-				</div>
 			</div>
 			
 			<!-- Task Form -->
@@ -33,6 +28,20 @@
 						<label for="task" class="ui-hidden-accessible ui-input-text">task:</label>
 						<input type="text" name="task" id="task" value="" placeholder="task" data-theme="a" class="ui-input-text ui-body-a ui-corner-all ui-shadow-inset">
 						<button type="submit" data-theme="b" class="ui-btn-hidden" data-disabled="false">Change Task</button>
+					</div>
+				</form>
+			</div>
+			
+			<!-- Name Form -->
+			<div data-role="popup" id="popupName" data-theme="a" data-overlay-theme="a" class="ui-corner-all ui-popup ui-body-a ui-overlay-shadow" aria-disabled="false" data-disabled="false" data-shadow="true" data-corners="true" data-transition="none" data-position-to="window" data-dismissable="false">
+				<a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
+				<form id="nameForm" data-ajax="false">
+					<div style="padding:10px 20px;">
+						<h3>Who Are You!?</h3>
+						<div id="uuid">UUID: </div>
+						<label for="name" class="ui-hidden-accessible ui-input-text">name:</label>
+						<input type="text" name="name" id="name" value="" placeholder="name" data-theme="a" class="ui-input-text ui-body-a ui-corner-all ui-shadow-inset">
+						<button type="submit" data-theme="b" class="ui-btn-hidden" data-disabled="false">Submit</button>
 					</div>
 				</form>
 			</div>
