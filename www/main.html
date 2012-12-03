@@ -25,7 +25,7 @@
 		
 			<div data-role="content">
 				<a href="#popupName" data-rel="popup" data-role="button" data-inline="true" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" data-theme="c" aria-haspopup="true" aria-owns="#popupName" class="ui-btn ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-up-c"><span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">Change Display Name</span></span></a>
-								<div class="containing-element">
+				<div class="containing-element">
 					<select name="track" id="track" data-role="slider">
 						<option value="off">Tracking Off</option>
 						<option value="on">Tracking On</option>
@@ -92,25 +92,6 @@
 					}
 				});
 				
-				//Name Form Submit
-				$("#nameForm").submit(function() {
-					localStorage.name = $("#name").val();
-					return false;
-				});
-				
-				//Task Form Submit
-				$("#taskForm").submit(function() {
-					localStorage.task = $("#task").val();
-					if(watching)
-						navigator.geolocation.getCurrentPosition(positionSuccess, positionError, options);
-					$("#popupTask").popup("close");
-					$('#taskText').html(localStorage.task);
-					return false;
-				});
-				
-				$('#popupTask').bind('popupafteropen', function(){
-					$('#task').focus();
-				});
 				/************************************
 							index.html
 				************************************/
@@ -125,6 +106,11 @@
 					
 					if(watching)
 						$('select#track').val('on').slider('refresh');
+						
+					$("#nameForm").submit(function() {
+						localStorage.name = $("#name").val();
+						return false;
+					});
 				});
 				
 				/************************************
@@ -138,6 +124,19 @@
 					
 					if(watching)
 						$('select#track').val('on').slider('refresh');
+						
+					$("#taskForm").submit(function() {
+						localStorage.task = $("#task").val();
+						if(watching)
+							navigator.geolocation.getCurrentPosition(positionSuccess, positionError, options);
+						$("#popupTask").popup("close");
+						$('#taskText').html(localStorage.task);
+						return false;
+					});
+					
+					$('#popupTask').bind('popupafteropen', function(){
+						$('#task').focus();
+					});
 				});
 				
 				/************************************
