@@ -169,8 +169,8 @@
 					},
 					function(data) {
 						data = decodeURIComponent(data);
-						data = data.replace(/\n/g, '<br>');
-						$("#myHistoryContent").html(data);
+						data = data.replace(/\n/g, '<br><br>').replace(/,/g, '<br>').replace(/[{|}|"]/g,'');
+						$("#myHistoryContent").html();
 						$('#refreshMyHistory').removeClass('ui-btn-active');
 						$('#refreshMyHistory').live('click', getMyHistory);					
 					}
@@ -226,7 +226,7 @@
 				var mapOperator = new MapOperator();
 				var initialLoc = new MapStruct.Location({latitude:49.193820,longitude:-123.984489,altitude:13}); 
 				mapOperator.initialize(document.getElementById("map"), initialLoc);
-				var trackerOp = new TrackerOperator('http://localhost:8124', mapOperator, 5000, 30000);			
+				var trackerOp = new TrackerOperator('http://192.168.1.8:8124', mapOperator, 5000, 30000);			
 				trackerOp.getClientList();
 			}
 			
