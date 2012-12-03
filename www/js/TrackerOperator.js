@@ -45,7 +45,7 @@ function TrackerOperator(url, map, interval, qUpdatedUserInterval){
 	 * 
 	 */
 	this.getClientList = function(){	
-		$.getJSON("http://localhost:8124?callback=?",
+		$.getJSON("http://192.168.1.8:8124?callback=?",
 			{
 				client:'users'
 			},

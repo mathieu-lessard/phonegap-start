@@ -4,7 +4,7 @@ function processJSON(MAP, json){
 		var location = new MapStruct.Location({latitude:user.latitude, longitude:user.longitude});
 		var visible = true;
 		
-		if (typeof TRACKER.users[id] == "undefined"){		
+		if (typeof TRACKER.users[id] == "undefined"){
 			var userMarker = MAP.putMarker(location, "css/images/person.png", visible);
 			var iWindow = MAP.initializeInfoWindow();
 			var markerInfoWindow = new MapStruct.MapMarker({marker:userMarker, infoWindow:iWindow});
@@ -39,7 +39,6 @@ function processJSON(MAP, json){
 			TRACKER.users[id].mapMarker.infoWindow = MAP.initializeInfoWindow(content);
 			
 			MAP.setMarkerClickListener(TRACKER.users[id].mapMarker.marker,function(){
-				console.log(id);
 				MAP.openInfoWindow(TRACKER.users[id].mapMarker.infoWindow, TRACKER.users[id].mapMarker.marker);	
 			});
 			//MAP.setMarkerVisible(TRACKER.users[id].mapMarker.marker,true);
