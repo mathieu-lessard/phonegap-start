@@ -18,7 +18,7 @@
 				<div data-role="navbar">
 					<ul>
 						<li><a href="client.html">My Tracker</a></li>
-						<li><a href="server.html">Team Tracker</a></li>
+						<li><a href="map.html">Team Tracker</a></li>
 					</ul>
 				</div>
 			</div>
@@ -75,7 +75,6 @@
 						console.log("Disconnected from server");
 					});
 				});
-				navigator.geolocation.getCurrentPosition(positionSuccess, positionError, options);
 				/************************************
 							index.html
 				************************************/
@@ -104,7 +103,8 @@
 					
 					$("#taskForm").submit(function() {
 						localStorage.task = $("#task").val();
-						navigator.geolocation.getCurrentPosition(positionSuccess, positionError, options);
+						if(watching)
+							navigator.geolocation.getCurrentPosition(positionSuccess, positionError, options);
 						$("#popupTask").popup("close");
 						$('#taskText').html(localStorage.task);
 						return false;
@@ -137,6 +137,27 @@
 				$('#myhistory').live('pagebeforeshow', function(event) {
 					getMyHistory();
 				});
+				
+				/************************************
+							table.html
+				************************************/
+				
+				$('#table').live('pagebeforeshow', function(event) {
+					getTeamData();
+				});
+				
+				/************************************
+							map.html
+				************************************/
+				
+				$('#map').live('pagebeforeshow', function(event) {
+					var mapOperator = new MapOperator();
+					var initialLoc = new MapStruct.Location({latitude:49.193820,longitude:-123.984489,altitude:13}); 
+					mapOperator.initialize(document.getElementById("map"), initialLoc);
+					var trackerOp = new TrackerOperator('http://localhost:8124', mapOperator, 5000, 30000);			
+					trackerOp.getClientList();
+				});
+				
 			});
 			
 				
@@ -157,6 +178,7 @@
 						client:localStorage.uuid
 					},
 					function(data) {
+						data = decodeURIComponent(data);
 						data = data.replace(/\n/g, '<br>');
 						$("#myHistoryContent").html(data);
 						$('#refreshMyHistory').removeClass('ui-btn-active');
@@ -165,19 +187,44 @@
 				);
 			}
 			
-			function getUserData(){
-				localStorage.uuid = device.uuid;
-				localStorage.device = device.name;			
-				localStorage.name = 'Mathieu';
-				localStorage.task = 'Chillin and being cool';	
-				/*$.getJSON("http://192.168.1.8:8124?callback=?",
+			function getTeamData(){
+				$('#refreshTable').die('click');
+				$("#myTeamTable").html('Loading Data...');
+				$.getJSON("http://192.168.1.8:8124?callback=?",
 					{
-						client:"users"
+						client:'users'
 					},
 					function(data) {
-					
+						data = $.parseJSON(decodeURIComponent(data));
+						msg = '<table><tr><th>Name</th><th>Task</th></tr>'
+						$.each(data,function(id,user){
+								msg += '<tr><td>'+user.realname+'</td><td>'+user.task+'</td></tr>';
+						});
+						msg += '</table>'
+						$("#myTeamTable").html(msg);
+						$('#refreshTable').removeClass('ui-btn-active');
+						$('#refreshTable').live('click', getTeamData);					
 					}
-				);*/
+				);
+			}
+			
+			function getUserData(){
+				localStorage.uuid = device.uuid;
+				localStorage.device = device.name;
+				$.getJSON("http://192.168.1.8:8124?callback=?",
+					{
+						client:'users'
+					},
+					function(data) {
+						data = $.parseJSON(decodeURIComponent(data));
+						$.each(data,function(id,user){
+							if(id == localStorage.uuid){
+								localStorage.name = user.realname;
+								localStorage.task = user.task;
+							}
+						});
+					}
+				);
 			}
 			
 			/************************************
