@@ -75,16 +75,47 @@
 						console.log("Disconnected from server");
 					});
 				});
+								
+				/************************************
+							UI Components
+				************************************/
+				//Tracking Slider
+				$('select#track').on('slidestop', function() {
+				alert(watching);
+					if(!watching){
+						alert('Tracking On');
+						watching = navigator.geolocation.watchPosition(positionSuccess, positionError, options);
+					}else{
+						alert('Tracking Off');
+						navigator.geolocation.clearWatch(watching);
+						watching = null;
+					}
+				});
+				
+				//Name Form Submit
+				$("#nameForm").submit(function() {
+					localStorage.name = $("#name").val();
+					return false;
+				});
+				
+				//Task Form Submit
+				$("#taskForm").submit(function() {
+					localStorage.task = $("#task").val();
+					if(watching)
+						navigator.geolocation.getCurrentPosition(positionSuccess, positionError, options);
+					$("#popupTask").popup("close");
+					$('#taskText').html(localStorage.task);
+					return false;
+				});
+				
+				$('#popupTask').bind('popupafteropen', function(){
+					$('#task').focus();
+				});
 				/************************************
 							index.html
 				************************************/
 				$('#loginPage').live('pagebeforeshow', function(event) {
 					$('#uuid').html('UUID: '+localStorage.uuid);
-					
-					$("#nameForm").submit(function() {
-						localStorage.name = $("#name").val();
-						return false;
-					});
 				
 					if(typeof(Storage)!=="undefined"){
 						//Fill in form
@@ -94,15 +125,6 @@
 					
 					if(watching)
 						$('select#track').val('on').slider('refresh');
-						
-					$('select#track').bind('change', function() {
-						if(!watching){
-							watching = navigator.geolocation.watchPosition(positionSuccess, positionError, options);
-						}else{
-							navigator.geolocation.clearWatch(watching);
-							watching = null;
-						}
-					});
 				});
 				
 				/************************************
@@ -113,33 +135,9 @@
 				
 					$('#taskText').html(localStorage.task);
 					
-					$("#taskForm").submit(function() {
-						localStorage.task = $("#task").val();
-						if(watching)
-							navigator.geolocation.getCurrentPosition(positionSuccess, positionError, options);
-						$("#popupTask").popup("close");
-						$('#taskText').html(localStorage.task);
-						return false;
-					});
-					
-					$('#popupTask').bind('popupafteropen', function(){
-						$('#task').focus();
-					});
 					
 					if(watching)
 						$('select#track').val('on').slider('refresh');
-						
-					$('select#track').bind('change', function() {
-					alert(watching);
-						if(!watching){
-							alert('Tracking On');
-							watching = navigator.geolocation.watchPosition(positionSuccess, positionError, options);
-						}else{
-							alert('Tracking Off');
-							navigator.geolocation.clearWatch(watching);
-							watching = null;
-						}
-					});
 				});
 				
 				/************************************
@@ -163,11 +161,7 @@
 				************************************/
 				
 				$('#map').live('pagebeforeshow', function(event) {
-					var mapOperator = new MapOperator();
-					var initialLoc = new MapStruct.Location({latitude:49.193820,longitude:-123.984489,altitude:13}); 
-					mapOperator.initialize(document.getElementById("map"), initialLoc);
-					var trackerOp = new TrackerOperator('http://localhost:8124', mapOperator, 5000, 30000);			
-					trackerOp.getClientList();
+					loadMap();
 				});
 				
 			});			
@@ -222,20 +216,33 @@
 			function getUserData(){
 				localStorage.uuid = device.uuid;
 				localStorage.device = device.name;
-				$.getJSON("http://192.168.1.8:8124?callback=?",
-					{
-						client:'users'
-					},
-					function(data) {
-						data = $.parseJSON(decodeURIComponent(data));
-						$.each(data,function(id,user){
-							if(id == localStorage.uuid){
-								localStorage.name = user.realname;
-								localStorage.task = user.task;
-							}
-						});
-					}
-				);
+				if(!localStorage.name || !localStorage.task){
+					//Temporary values. This will be used if there is no data
+					localStorage.name = "new user";
+					localStorage.task = "no task";
+					$.getJSON("http://192.168.1.8:8124?callback=?",
+						{
+							client:'users'
+						},
+						function(data) {
+							data = $.parseJSON(decodeURIComponent(data));
+							$.each(data,function(id,user){
+								if(id == localStorage.uuid){
+									localStorage.name = user.realname;
+									localStorage.task = user.task;
+								}
+							});
+						}
+					);
+				}
+			}
+			
+			function loadMap(){			
+				var mapOperator = new MapOperator();
+				var initialLoc = new MapStruct.Location({latitude:49.193820,longitude:-123.984489,altitude:13}); 
+				mapOperator.initialize(document.getElementById("map"), initialLoc);
+				var trackerOp = new TrackerOperator('http://localhost:8124', mapOperator, 5000, 30000);			
+				trackerOp.getClientList();
 			}
 			
 			/************************************
