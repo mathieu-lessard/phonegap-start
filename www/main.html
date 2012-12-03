@@ -82,7 +82,7 @@
 				************************************/
 				$('#loginPage').live('pagebeforeshow', function(event) {
 					$('#uuid').html('UUID: '+localStorage.uuid);
-				
+					alert($(window).height())
 					if(typeof(Storage)!=="undefined"){
 						//Fill in form
 					}else{
